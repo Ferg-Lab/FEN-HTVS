@@ -932,8 +932,10 @@ class FECalc():
         return np.nanmean(f_list), np.nanstd(f_list)/np.sqrt(len(f_list)-np.count_nonzero(np.isnan(f_list)))
     
     def _calc_K(self) -> tuple:
-        self.K = np.exp(-self.free_e*1000/self.KbT)
-        self.K_err = self.K*self.free_e_err*1000/self.KbT
+        A = 1/(6.022e23*5**3*1e-24) # C0 (M) for box edge = 5 A
+        B = 1000/self.KbT
+        self.K = A*np.exp(B*self.free_e)*1e6 # muM
+        self.K_err = B*self.K*self.free_e_err # muM
         return self.K, self.K_err
     
     def _postprocess(self) -> None:
